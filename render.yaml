@@ -4,24 +4,27 @@
 #   2. Frontend Static Site (Vite React build)
 #
 # IMPORTANT SECURITY:
-#   - SARVAM_API_KEY is added manually in Render > Web Service > Environment.
-#     It is `sync: false` here so the dashboard prompts for it, and it is never
-#     stored in this file or any tracked source.
+#   - SARVAM_API_KEY is added manually in Render > Web Service > Environment
+#     using `sync: false` so the dashboard prompts for it. It is never stored
+#     in this file or any tracked source.
 #   - Real secrets must never be placed in this file.
+#
+# NOTE: Monorepo root directories use the `rootDir` field. `npm install` runs
+# inside the declared rootDir so Vite is installed before `npm run build`.
 services:
   # ---------- Backend: Node.js WebSocket server ----------
   - type: web
     name: voice-health-screener-server
     runtime: node
     plan: free
-    rootDirectory: server
+    rootDir: server
     buildCommand: npm install
     startCommand: npm start
     healthCheckPath: /health
     envVars:
       - key: APP_NAME
         value: Pulse Intake
-      # REQUIRED: set the real Sarvam key in the Render dashboard. This prompts on creation.
+      # REQUIRED: set the real Sarvam key in the Render dashboard (prompts on creation).
       - key: SARVAM_API_KEY
         sync: false
       # Allowed browser origin(s) for CORS. Set to the deployed frontend, e.g.
@@ -46,9 +49,10 @@ services:
   # ---------- Frontend: Vite static site ----------
   - type: static
     name: voice-health-screener-client
-    rootDirectory: client
+    runtime: static
+    rootDir: client
     buildCommand: npm install && npm run build
-    publishDirectory: dist
+    staticPublishPath: dist
     envVars:
       # Point the frontend at the deployed backend so it connects to wss://.../ws.
       - key: VITE_API_URL
