@@ -166,7 +166,8 @@ The repository includes `render.yaml` (a Render Blueprint). To deploy:
    - `SARVAM_API_KEY` ΓÇö your real key.
    - `CLIENT_URL` ΓÇö the **Static Site** URL, e.g. `https://voice-health-screener-client.onrender.com`. Add `http://localhost:5173` if you also want to hit the deployed backend from local dev.
 4. Render wires the Static Site's `VITE_API_URL` to the backend automatically via `fromService` in the Blueprint. If you deploy manually instead of with a Blueprint, set `VITE_API_URL` (Static Site environment) to `https://voice-health-screener-server.onrender.com`.
-5. Deploy. The backend health check uses `/health`.
+5. The Static Site build command is `npm --prefix client install && npm run build --prefix client` with publish path `client/dist` (Render static builds run from the repo root). The backend health check uses `/health`.
+6. Deploy, then trigger a **Blueprint sync / update** (Dashboard → Blueprint) so Render re-reads `render.yaml`; or if the service already exists, update the Static Site's Build command and Publish directory to the values above.
 
 ## Required Render Environment Variables
 
@@ -181,8 +182,9 @@ The repository includes `render.yaml` (a Render Blueprint). To deploy:
 
 - **Backend build:** `npm install`
 - **Backend start:** `npm start` (i.e. `node src/server.js`)
-- **Frontend build:** `npm install && npm run build` (Vite)
-- **Frontend publish directory:** `dist`
+- **Frontend build (Render):** `npm --prefix client install && npm run build --prefix client` (Vite). Render static builds run from the repository root, so npm's `--prefix client` and a repo-root-relative publish path are used.
+- **Frontend publish directory (Render):** `client/dist`
+- **Frontend build (local):** `cd client` then `npm install && npm run build`
 
 ## Health Check Endpoint
 

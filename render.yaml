@@ -9,8 +9,8 @@
 #     in this file or any tracked source.
 #   - Real secrets must never be placed in this file.
 #
-# NOTE: Monorepo root directories use the `rootDir` field. `npm install` runs
-# inside the declared rootDir so Vite is installed before `npm run build`.
+# NOTE: Render static-site builds run from the repository root, so the frontend
+# uses npm's --prefix commands and a repo-root-relative publish path (client/dist).
 services:
   # ---------- Backend: Node.js WebSocket server ----------
   - type: web
@@ -47,12 +47,15 @@ services:
         value: "15000"
 
   # ---------- Frontend: Vite static site ----------
+  # Render static-site builds run from the repository root, so npm's --prefix and
+  # a repo-root-relative publish path are used (no reliance on a root directory
+  # changing the working directory). `npm --prefix client install` installs Vite
+  # into client/, then `npm run build --prefix client` invokes client's "vite build".
   - type: static
     name: voice-health-screener-client
     runtime: static
-    rootDir: client
-    buildCommand: npm install && npm run build
-    staticPublishPath: dist
+    buildCommand: npm --prefix client install && npm run build --prefix client
+    staticPublishPath: client/dist
     envVars:
       # Point the frontend at the deployed backend so it connects to wss://.../ws.
       - key: VITE_API_URL
