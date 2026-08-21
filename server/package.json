@@ -1,0 +1,17 @@
+{
+  "name": "voice-health-screener-server",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "sarvamai": "^1.1.8",
+    "uuid": "^11.0.5",
+    "ws": "^8.18.0"
+  }
+}
